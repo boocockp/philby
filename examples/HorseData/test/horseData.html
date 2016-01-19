@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Horse Data Search</title>
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <style>
+        body {
+            font-family: Arial,Helvetica,sans-serif;
+            padding: 20px;
+        }
+
+        .spaced {
+            margin-top: 20px;
+        }
+
+        #searchNames {
+            border: 1px solid gray;
+            border-collapse: collapse;
+        }
+        #searchNames>tbody>tr>td, #searchNames th {
+            padding: 3px;
+            border: 1px solid gray;
+            vertical-align: top;
+        }
+
+        #searchNames td.search-name {
+            user-select: none;
+        }
+
+        #searchNames td.search-results {
+            padding: 0;
+            user-select: none;
+        }
+
+        table.search-results td {
+            padding: 3px;
+        }
+
+        table.search-results td.horse-name {
+            color: blue;
+            cursor: pointer;
+        }
+
+        table.search-results td.horse-name.selected {
+            color: green;
+            cursor: inherit;
+            background-color: lightgray;
+        }
+
+        div#search {
+            width: 50%;
+            min-width: 500px;
+            float: left;
+        }
+
+        div#raceRecord {
+            width: 50%;
+            min-width: 500px;
+            float: left;
+        }
+
+        #horseFrame {
+            width: 100%;
+            height: 700px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+<h1>Horse Data Search</h1>
+
+<div id="search">
+
+    <div>
+        <p><label>Horse names</label></p>
+        <p>
+            <textarea name="" id="namesForSearch" cols="50" rows="5" placeholder="Comma or tab or return between each name "></textarea>
+            <button id="loadNames">Load names</button>
+        </p>
+    </div>
+
+    <div class="spaced">
+        <table id="searchNames">
+            <thead>
+            <tr>
+                <th>Horse Name</th>
+                <th>Search Results</th>
+                <th>Max OR</th>
+                <th>Earnings</th>
+                <th>Starts</th>
+                <th>Last Raced</th>
+                <th>First raced</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            </tbody>
+        </table>
+        <div>
+            <p>Results to copy</p>
+            <textarea id="tsvResults" cols="30" rows="3"></textarea>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="raceRecord"></div>
+
+<template id="searchRow">
+    <tr>
+        <td class="search-name">
+            <form>
+                <input name="horseName" type="text">
+                <button>Search</button>
+            </form>
+        </td>
+        <td class="search-results"></td>
+        <td class="result maxOr"></td>
+        <td class="result earnings"></td>
+        <td class="result starts"></td>
+        <td class="result lastRaced"></td>
+        <td class="result firstRaced"></td>
+   </tr>
+</template>
+
+<script>
+    $(function() {
+        $('#loadNames').on('click', function(e) {
+            var names = $('#namesForSearch').val().trim().split( /\s*,\s*|[\r\n]+/ );
+            console.log('names', names);
+            loadNamesIntoSearchTable(names);
+            clearRaceRecord();
+        });
+
+        $(document).on('submit', '.search-name', function(e) {
+            e.preventDefault();
+            var tableRow = $(e.target).closest('tr');
+            var resultsCell = tableRow.find('.search-results');
+            var horseName = tableRow.find('input[name=horseName]').val();
+            clearRaceRecord();
+            findHorse(horseName, function(results) { showResults(results, resultsCell)});
+        });
+
+        $(document).on('click', '.horse-name', function(e) {
+            var horseNameCell = $(e.currentTarget);
+            var tableRow = horseNameCell.closest('td.search-results').parent();
+            var horseId = horseNameCell.attr('data-horse-id');
+            if (horseId == 'NOT_FOUND') {
+                showHorseData({}, tableRow);
+                clearRaceRecord();
+            } else {
+                getData(horseId, function(data) { showHorseData(data, tableRow);});
+            }
+            horseNameCell.closest('table').find('td').removeClass('selected');
+            horseNameCell.addClass('selected');
+        });
+
+        $('#tsvResults').on('focus', function(e) {
+            $(e.target).select();
+        })
+
+    });
+
+    function loadNamesIntoSearchTable(names) {
+        var tableBody = $('#searchNames tbody');
+        var rowTemplate = $('#searchRow')[0];
+        tableBody.empty();
+        names.forEach(function(n) {
+            var rowEl = document.importNode(rowTemplate.content, true);
+            $(rowEl).find('input').val(n);
+            tableBody.append(rowEl);
+        });
+    }
+
+    function findHorse(horseName, callback) {
+        var url = '/public_gateway/db_search_interface.sd';
+        var postData = { search: horseName, edition: 4, category: 65535};
+        $.post(url, postData, function(data) {
+            console.log('findHorse', data);
+            var horses = $(data).find("category[name=Horses] item");
+            console.log('horses', horses);
+            var horseData = horses.map(function(i, el) {
+                var name = $(el).find('STYLE_NAME').text();
+                var id = $(el).find('ID').text();
+                var startDate = $(el).find('START_DATE').text();
+                return {name:name, id:id, startDate:startDate};
+            }).get();
+            console.log('horseData', horseData);
+            callback(horseData);
+        });
+    }
+
+    function showResults(results, el) {
+        $(el).empty().append(horseTable(results));
+    }
+
+    function showHorseData(data, tableRow) {
+        for (n in data) {
+            var val = data[n];
+            var sel = '.' + n;
+            tableRow.find(sel).html(val || '');
+        }
+        updateTsvResults();
+    }
+
+    function horseTable(data) {
+        var result = $('<table class="search-results"></table>');
+        data.forEach(function(horse) {
+            var row = $('<tr></tr>').appendTo(result);
+            row.append('<td class="horse-name" data-horse-id="' + horse.id + '" title="Start Date ' + horse.startDate + '">' + horse.name + '</td>');
+        });
+
+        var notFoundRow = $('<tr></tr>').appendTo(result);
+        notFoundRow.append('<td class="horse-name" data-horse-id="NOT_FOUND" title="No matching result"><i>Not Found</i></td>');
+
+        return result;
+    }
+
+    function updateTsvResults() {
+        var tsvText = $('#searchNames>tbody>tr').map(function(i, row) {
+            return $(row).find('td.result').map(function(i, td) {
+                return $(td).text();
+            }).get().join('\t');
+        }).get().join('\n');
+        $('#tsvResults').val(tsvText);
+    }
+
+    function clearRaceRecord() {
+        $('#raceRecord').empty();
+    }
+
+    function getData(horseId, callback) {
+        clearRaceRecord();
+        var url = location.protocol + '//' + location.host + '/horses/horse_home.sd?horse_id=' + horseId;
+        var horseFrame = $('<iframe id="horseFrame" src="' + url + '"></iframe>').appendTo($('#raceRecord'));
+
+        horseFrame.on('load', function() {
+            document.domain = 'racingpost.com';
+            var horseBody = $(horseFrame[0].contentDocument.body);
+            var formTable = horseBody.find('#horse_form table');
+            var raceDates = formTable.find('tr td:first-child').filter(function(i, el) { return $(el).text() != ""});
+            var lastRaced = raceDates.first().text().trim();   // they are in reverse order
+            var firstRaced = raceDates.last().text().trim();
+
+            var recordTable = horseBody.find('#horse_race_record table');
+            var rulesRow = recordTable.find('tr:contains("Rules Races")');
+            var starts = rulesRow.find('td:nth-child(2)').text();
+            var earnings = rulesRow.find('td:nth-child(7)').text().replace(/[^0-9]/g, '');
+
+            var ors = horseBody.find('#horse_race_record table tr:not(:contains("Rules Races")) td:nth-child(10)')
+                                .map(function(i, e) { return +($(e).text().trim()); }).get()
+                                .filter(function(n) { return !isNaN(n);} );
+            var maxOr = ors.length ? Math.max.apply(null, ors) : '';
+
+            callback({
+                lastRaced: lastRaced,
+                firstRaced: firstRaced,
+                starts: starts,
+                earnings: earnings,
+                maxOr: maxOr
+            });
+        });
+
+    }
+</script>
+
+</body>
+</html>

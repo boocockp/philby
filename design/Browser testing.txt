@@ -1,0 +1,58 @@
+Browser testing
+===============
+
+- Proxy gets whatever it is asked for
+- Script can download tests to execute
+- Proxy can also load files requested on same URL but provide them itself
+- Maybe configure browser to use proxy - can do on command line for Cr
+
+Writing tests
+-------------
+- Use JS and jQuery throughout
+- Use Mocha or other test runner
+- In same window, test code can be synchronous unless the operation triggered is itself async
+- Helper script can load jquery if required
+- Proxy also receives results
+- For CI, run proxy, run browser pointing to page under test
+- Like old selenium, but test runs in browser page, not externally
+- If proxy makes app and tests appear to come from the same origin, tests can open app in another window and manipulate it as they wish
+- Proxied windows follow links to new pages, can still be used
+- Test can get its own URL to find the app to test
+
+Reporting results
+-----------------
+- Test script could communicate back to app via special path on proxy
+- Report results, send back screenshots or HTML snapshots
+- Send back console logs at end or as they happen by XHR
+- Watch changes to elements (eg mocha div) and send them back as they happen
+- Mocha reporter could send via Ajax
+
+Auto Browser
+------------
+- Give it a test page to load in browser, which then takes over
+- Or supply a script, which is inserted into a generated page and loaded in the browser
+- Or a function, which is toString'ed and loaded in browser
+- Can do any operation and report console or elements back to proxy
+- Proxy sends output to a listener
+- Command line browser remote control app runs any script you want in browser and outputs the result on stdout or to file
+- Could use for screen scraping or whatever
+
+Browser in charge
+-----------------
+- Browser runs the test, server "serves" it
+- Server exposes commands to browser
+- Could use for database init, recording results, whatever
+- Could have auto remote control of server side JS object from browser
+- Expose as REST API with URL specifying object path and method, args passed as JSON array
+- Args would need to be JSON stringable
+- Someone may have done this - quite like the Java/JS thing - DWT?
+- Return promise on client side, server side function call may be sync or async
+
+Controlling windows from third sites
+------------------------------------
+- Proxy inserts script at end of every page
+- Post message to remote control other windows eg Google signin
+- Remote control of foreign windows can only work if browser set to use proxy server
+
+
+
