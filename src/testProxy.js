@@ -18,11 +18,12 @@ proxy.on('error', function (err, req, res) {
 
 var server = http.createServer(function(req, res) {
     urlParts = url.parse(req.url, true, true);
-    var testMatch = urlParts.pathname.match("^/(test/.+)");
-    if (testMatch) {
-        var testFile = testMatch[1];
-        console.log('test request', testFile);
-        fs.readFile(rootDir + '/' + testFile, function (err, data) {
+    var urlPath = urlParts.pathname.substring(1);
+    var filePath = rootDir + '/' + urlPath;
+    var fileFound = fs.existsSync(filePath);
+    if (fileFound) {
+        console.log('test request', urlPath);
+        fs.readFile(filePath, function (err, data) {
             if (err) {
                 res.statusCode = 404;
             } else {
