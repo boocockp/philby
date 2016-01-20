@@ -2,11 +2,11 @@ To Do
 =====
 
 - Scripts to run HorseData example
-- Tests in HorseData
+    - Tests in HorseData
 - README
 - Separate text proxy function and runner
-- Run everything from one doc root dir, default to working dir
-- Let any file found locally override server
-- github repo
+    - Run everything from one doc root dir, default to working dir
+    - Let any file found locally override server
+    - github repo
 - can upload results
 
