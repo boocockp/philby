@@ -53,6 +53,7 @@ Controlling windows from third sites
 - Proxy inserts script at end of every page
 - Post message to remote control other windows eg Google signin
 - Remote control of foreign windows can only work if browser set to use proxy server
+- Strip no-frame headers
 
 
 
