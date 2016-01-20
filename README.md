@@ -36,7 +36,7 @@ Getting started
 - Start Philby: run `node src/testProxy <test-dir>`  (or use the `startProxy.sh` script on OS X).  It prints out the port it is running on.
 - Configure a new user profile for your browser to run a separate instance that uses Philby as its proxy server.  
    You will have to look up how to do this for your browser - it seems to be easiest for Chrome.  On OS X you can use the `startChrome.sh` script.
-- Open a test page by typing  target-host/path-to-test-file in the address bar
+- Open a test page by typing  `<target-host>/<path-to-test-file>` in the address bar
    
 Examples
 --------
