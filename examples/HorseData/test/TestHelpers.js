@@ -3,7 +3,7 @@ function waitFor(condition, action) {
     function checkCondition() {
         if (condition()) {
             action()
-        } else if (count < 20) {
+        } else if (count < 50) {
             count++;
             setTimeout(checkCondition, 100);
         } else {

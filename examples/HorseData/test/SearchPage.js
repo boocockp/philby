@@ -2,6 +2,8 @@ function SearchPage(element) {
     this.el = $(element);
 }
 
+SearchPage.url = 'horseData.html';
+
 SearchPage.prototype.find = function(selector) {
     return this.el.find(selector);
 };
@@ -38,17 +40,34 @@ SearchRow.prototype.find = function(selector) {
 };
 
 var searchRowFunctions = {
-    search: function(callback) {
+    search: function() {
         var self = this;
-        this.find('td.search-name button')[0].click();
-        waitFor(function() {
-            return self.find('td.search-results').text();
-        }, callback)
+
+        return new Promise(function(resolve, reject) {
+            self.find('td.search-name button')[0].click();
+            waitFor(function() {
+                return self.find('td.search-results').text();
+            }, resolve)
+
+        });
     },
 
     searchResultNames: function() {
         return this.find('table.search-results td.horse-name').map(function(i, el) { return $(el).text(); }).get();
-    }
+    },
+
+    selectResult: function(index) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.find('table.search-results td.horse-name').eq(index)[0].click();
+            waitFor(function() {
+                return self.maxOr() != '';
+            }, resolve)
+
+        });
+    },
+
+    maxOr: function() { return this.find('td.result.maxOr').text() }
 };
 
 for(var n in searchRowFunctions) {
