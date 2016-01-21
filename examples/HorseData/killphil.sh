@@ -1,0 +1,1 @@
+pkill -f -l philby
