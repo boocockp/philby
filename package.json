@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node ./src/testProxy.js"
+    "start": "node ./src/philby.js"
   },
   "dependencies": {
+    "fs-extra": "^0.26.4",
     "http-proxy": "^1.12.0"
   },
   "devDependencies": {

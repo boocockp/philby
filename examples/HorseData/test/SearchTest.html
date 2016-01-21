@@ -29,7 +29,19 @@
     <script>
         mocha.checkLeaks();
         mocha.globals(['jQuery', 'testDoc']);
-        mocha.run();
+        mocha.run()
+                 .on('suite end', function(suite) {
+                    if (suite.root) {
+                        console.log('suite end', suite);
+                        var s = suite.suites[0];
+                        var resultUrl = '/test_results/'+ s.title.replace(/ /g, '_') + '.json';
+                        var results = {
+                            suite: s.title,
+                            tests: s.tests.map(function(t) { return {title: t.title, state: t.state, err: t.err && t.err.message};} )
+                        };
+                        $.ajax(resultUrl, {method: 'PUT', data: JSON.stringify(results)});
+                    }
+                });
     </script>
 </body>
 </html>

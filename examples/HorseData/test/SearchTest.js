@@ -1,6 +1,5 @@
 describe('Horse Data Search', function() {
 
-    var testDoc;
     var page;
 
     this.timeout(5000);

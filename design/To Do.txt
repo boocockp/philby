@@ -3,10 +3,12 @@ To Do
 
 - Scripts to run HorseData example
     - Tests in HorseData
-- README
-- Separate text proxy function and runner
+    - README
+- Separate test proxy function and runner
     - Run everything from one doc root dir, default to working dir
     - Let any file found locally override server
     - github repo
-- can upload results
-
+    - can upload results
+- can start and stop browser
+- can control proxy port
+- Not Found not working in HorseData
