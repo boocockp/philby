@@ -41,4 +41,20 @@ Getting started
 Examples
 --------
 
-The Horse Data example.
+### Horse Data
+
+This example is a tool built for a real world problem: assisting the collection of data on race horse performance for a scientific research project.
+It lets you search for a list of horse names on the UK Racing Post website.  For each name, you may get multiple results, so you can click on the correct one.  
+It then displays the statistics page for that horse from the website, and extracts from it the numbers of interest and puts them into the results table.
+The code is all contained in the `horseData.html` file.  So long as you request this file from www.racingpost.com via Philby, 
+it has access to the ajax calls and the content of the horse statistics iframe.
+
+Run the `start.sh` script (on OS X) to see the tool in action.
+
+#### Test
+There is also a functional test for the tool, written with Mocha and jQuery.  The main test runner page is `test/SearchTest.html`.  
+The test loads `horseData.html` in an iframe, again requesting it from www.racingpost.com to ensure access to everything it needs.
+At the end, the test uploads a summary of the results to Philby to save in a local file.  
+This gives a way of communicating the test results back to the test host, so that it could be used in a continuous integration build. 
+
+Run the `test.sh` script (on OS X) to see the tool in action.
