@@ -2,7 +2,7 @@ function SearchPage(element) {
     this.el = $(element);
 }
 
-SearchPage.url = 'horseData.html';
+SearchPage.url = '../horseData.html';
 
 SearchPage.prototype.find = function(selector) {
     return this.el.find(selector);

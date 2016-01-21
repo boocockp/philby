@@ -1,7 +1,7 @@
 To Do
 =====
 
-- Scripts to run HorseData example
+    - Scripts to run HorseData example
     - Tests in HorseData
     - README
 - Separate test proxy function and runner
@@ -10,5 +10,6 @@ To Do
     - github repo
     - can upload results
 - can start and stop browser
-- can control proxy port
+- can start and stop proxy
+- can change proxy port
 - Not Found not working in HorseData
