@@ -1,0 +1,32 @@
+To Do
+=====
+
+    - Scripts to run HorseData example
+    - Tests in HorseData
+    - README
+- Npm module with -g option
+- Separate test proxy function and runner
+    - Run everything from one doc root dir, default to working dir
+    - Let any file found locally override server
+    - github repo
+    - can upload results
+- can start and stop browser
+- can start and stop proxy
+- can change proxy port
+- Not Found not working in HorseData
+- Js scripts to handle requests - need to know when to serve and when to run
+- Js scripts given either req, res or just parameters
+- Templated responses - handlebars
+- Delete files/dirs on server
+- Protect/allow writing/deleting certain directories
+- Store responses from target site
+- Use responses from target site to simulate it
+- Compare responses from target site with expected
+- Log/Store browser requests
+- HTTPS
+- Remove no frame headers
+- Way of controlling windows from third site eg Google accounts
+- Inject control scripts?
+- Inter-window communication
+- Funcunit integration
+- Other useful testing tools?
